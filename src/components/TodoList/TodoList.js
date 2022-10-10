@@ -14,6 +14,8 @@ import Categories from "./Categories/Categories";
 import { removeTodoItem } from "../../utils/managingNotes";
 import { FORM_VALIDATIONS } from "../../utils/formValidation";
 import FormTodo from "../FormTodo/FormTodo";
+import { useDispatch, useSelector } from "react-redux";
+import { loadNotesActioncreator } from "@/redux/store/features/notesSlice";
 
 const TodoList = () => {
   // State
@@ -21,6 +23,11 @@ const TodoList = () => {
   const descriptionRef = useRef(null);
   const categoryRef = useRef(null);
   const [actualCategory, setActualCategory] = useState("Todas");
+  const dispatch = useDispatch();
+
+  const { notes } = useSelector((state) => state.notes);
+
+  console.log(notes);
 
   const [todoList, setTodoList] = useState([
     {
@@ -45,7 +52,8 @@ const TodoList = () => {
   // get the todoList from localstorage everytime the web is opened
   useEffect(() => {
     const localNotes = getLocalStorage(LOCAL_STORAGE_KEY);
-    localNotes && setTodoList(localNotes);
+    // localNotes && setTodoList(localNotes);
+    dispatch(loadNotesActioncreator(localNotes));
   }, []);
 
   // Take the focus event on change notes array
