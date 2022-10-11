@@ -1,17 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import Button from "../Inputs/Button/Buton";
 import TodoItem from "../TodoItem";
-import TextInput from "../Inputs/TextInput";
-import SelectInput from "../Inputs/SelectInput";
-import FormNoteError from "../FormNoteError";
-import { updateLocalStorage } from "../../utils/storage/updateLocalStorage";
 import { getLocalStorage } from "../../utils/storage/getLocalStorage";
 import { LOCAL_STORAGE_KEY } from "../../utils/constants";
 import { itemVariants } from "./animations";
 import styles from "./TodoList.module.scss";
 import Categories from "./Categories/Categories";
-import { removeTodoItem } from "../../utils/managingNotes";
 import { FORM_VALIDATIONS } from "../../utils/formValidation";
 import FormTodo from "../FormTodo/FormTodo";
 
@@ -28,6 +22,7 @@ const TodoList = () => {
       content: [],
     },
   ]);
+
   const categoriesAbailable = [];
   // add categories to categoriesAbailable
   todoList.forEach((category) => {
