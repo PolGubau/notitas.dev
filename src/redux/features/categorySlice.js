@@ -6,21 +6,28 @@ const categorySlice = createSlice({
   name: "categories",
   initialState: [],
   reducers: {
-    loadData: (state, action) => {
-      state = [...action.payload];
-    },
+    loadData: (state, action) => action.payload,
     addCategory: (state, action) => {
       state.content = [...state.content, action.payload];
       updateLocalStorage(LOCAL_STORAGE_KEY, state.content);
     },
 
     addNote: (state, action) => {
-      // action.payload = {title: 'title', description: 'description'}
-
-      //state = [{category:'title', content:[{id:1, title:'title', description:'description', creationDate:'date', isCompleted:false}]}]
-
       //  in state we will have a new note, then we wil need to check if this note is in a category that already exists, if it is, we will add it to the category, if not, we will create a new category with the new note
       // 1. check if the category already exists
+      const categoryExists = state.find(
+        (category) => category.title === action.payload.category
+      );
+      if (categoryExists) {
+        // 2. if the category exists, we will add the new note to the category
+        categoryExists.content = [...categoryExists.content, action.payload];
+      } else {
+        // 3. if the category does not exist, we will create a new category with the new note
+        state = [
+          ...state,
+          { title: action.payload.category, content: [action.payload] },
+        ];
+      }
 
       state.content.push(action.payload);
     },

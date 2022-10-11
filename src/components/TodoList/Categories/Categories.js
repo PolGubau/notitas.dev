@@ -6,13 +6,14 @@ import { handleNewCategory } from "../../../utils/managingCategories";
 export default function Categories({
   setActualCategory,
   actualCategory,
-  categoriesAbailable,
+  allCategories,
   setTodoList,
   todoList,
 }) {
+  console.log(allCategories);
   return (
     <section className={styles.container}>
-      {categoriesAbailable.map((category) => (
+      {allCategories.map((category) => (
         <p
           className={
             actualCategory === category ? styles.active : styles.inactive

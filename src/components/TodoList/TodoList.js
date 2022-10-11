@@ -13,6 +13,8 @@ import {
   addNoteActioncreator,
   addCategoryActioncreator,
 } from "@/redux/features/categorySlice";
+import { getLocalStorage } from "@/utils/storage/getLocalStorage";
+
 const TodoList = () => {
   // State
   const titleRef = useRef(null);
@@ -21,26 +23,27 @@ const TodoList = () => {
   const [actualCategory, setActualCategory] = useState("Todas");
   const dispatch = useDispatch();
 
+  // Loading redux State and putting into todoList var
+
+  const allNotes = [];
+  const allCategories = [];
+
+  useEffect(() => {
+    console.log("Taking data");
+    const data = getLocalStorage(LOCAL_STORAGE_KEY);
+    dispatch(loadDataActioncreator(data));
+    todoList.map((category) => {
+      allCategories.push(category.title);
+      category.content.forEach((note) => {
+        allNotes.push(note.payload);
+      });
+    });
+  }, []);
   const todoList = useSelector((state) => state.categories);
-
-  const categoriesAbailable = [];
-  // add categories to categoriesAbailable
-  todoList.forEach((category) => {
-    categoriesAbailable.push(category.title);
-  });
-
-  const allNotitas = todoList.reduce(
-    (acc, category) => [...acc, ...category.content],
-    []
-  );
+  console.log(todoList);
 
   const [hasError, setHasError] = useState(false);
   const [errorCount, setErrorCount] = useState(0);
-
-  // get the todoList from redux storage everytime the web is opened
-  useEffect(() => {
-    dispatch(loadDataActioncreator(localStorage.getItem(LOCAL_STORAGE_KEY)));
-  }, [todoList]);
 
   // Take the focus event on change notes array
   const addTodoItem = () => {
@@ -63,7 +66,7 @@ const TodoList = () => {
       titleRef.current.value.length
     );
     if (formValidationsPassed) {
-      if (!categoriesAbailable.includes(category)) {
+      if (!allCategories.includes(category)) {
         const newCategory = {
           title: category,
           content: [newTodo],
@@ -109,20 +112,23 @@ const TodoList = () => {
           Notitas{" "}
           {actualCategory !== "Todas" && <span>en {actualCategory}</span>}
         </h1>
-
-        <Categories
-          todoList={todoList}
-          // setTodoList={setTodoList}
-          categoriesAbailable={categoriesAbailable}
-          setActualCategory={setActualCategory}
-          actualCategory={actualCategory}
-        />
+        {allCategories.length > 0 &&
+          (console.log(allCategories),
+          (
+            <Categories
+              todoList={todoList}
+              // setTodoList={setTodoList}
+              allCategories={allCategories}
+              setActualCategory={setActualCategory}
+              actualCategory={actualCategory}
+            />
+          ))}
       </div>
       <motion.div className={styles["todo-list-container"]}>
-        {allNotitas.length === 0
+        {allNotes.length === 0
           ? ""
           : actualCategory === "Todas"
-          ? allNotitas.map((todo) => {
+          ? allNotes.map((todo) => {
               return (
                 <TodoItem
                   key={todo.id}
@@ -167,7 +173,7 @@ const TodoList = () => {
         nodeDescriptionRef={descriptionRef}
         categoryRef={categoryRef}
         addTodoItem={addTodoItem}
-        categoriesAbailable={categoriesAbailable}
+        categoriesAbailable={allCategories}
         hasError={hasError}
         setHasError={setHasError}
         errorCount={errorCount}
