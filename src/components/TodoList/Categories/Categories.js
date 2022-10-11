@@ -11,7 +11,7 @@ export default function Categories({
   todoList,
 }) {
   return (
-    <div className={styles.container}>
+    <section className={styles.container}>
       {categoriesAbailable.map((category) => (
         <p
           className={
@@ -33,6 +33,6 @@ export default function Categories({
       >
         <AiOutlinePlus />
       </div>
-    </div>
+    </section>
   );
 }

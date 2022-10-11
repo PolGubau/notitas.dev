@@ -6,6 +6,8 @@ import { updateLocalStorage } from "../../utils/storage/updateLocalStorage";
 import { LOCAL_STORAGE_KEY } from "../../utils/constants";
 import styles from "./TodoItem.module.scss";
 import { CgClose } from "react-icons/cg";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteNoteActioncreator } from "@/redux/features/categorySlice";
 const TodoItem = ({
   id,
   title,
@@ -17,16 +19,17 @@ const TodoItem = ({
   setActualCategory,
   setTodoList,
 }) => {
-  const deleteById = (idToRemove) => {
-    const newTodoList = removeTodoItem(idToRemove, todoList, setActualCategory);
-    setTodoList(newTodoList);
-    updateLocalStorage(LOCAL_STORAGE_KEY, newTodoList);
-  };
+  const dispatch = useDispatch();
 
   const todoRef = useRef(null);
 
   const [open, setOpen] = useState(false);
   const [deletable, setDeletable] = useState(false);
+
+  const deleteById = (idToRemove) => {
+    dispatch(deleteNoteActioncreator(idToRemove));
+  };
+
   return (
     <motion.div
       ref={todoRef}
@@ -56,10 +59,12 @@ const TodoItem = ({
           : (todoRef.current.style.backgroundColor = "#d7e3fb");
       }}
     >
-      <div className={styles.todoText}>
+      <div className={styles.todoContainer}>
         {deletable && <FaTrashAlt />}
-        <p className={styles.title}>{title}</p>
-        {open ? <p className={styles["description"]}>{description}</p> : ""}
+        <div className={styles.todoText}>
+          <p className={styles.title}>{title}</p>
+          {open ? <p className={styles["description"]}>{description}</p> : ""}
+        </div>
       </div>
       <motion.div className={styles["delete"]} onClick={() => deleteById(id)}>
         <span>

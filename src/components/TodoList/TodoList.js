@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import TodoItem from "../TodoItem";
-import { getLocalStorage } from "../../utils/storage/getLocalStorage";
 import { LOCAL_STORAGE_KEY } from "../../utils/constants";
 import { itemVariants } from "./animations";
 import styles from "./TodoList.module.scss";
@@ -9,8 +8,11 @@ import Categories from "./Categories/Categories";
 import { FORM_VALIDATIONS } from "../../utils/formValidation";
 import FormTodo from "../FormTodo/FormTodo";
 import { useDispatch, useSelector } from "react-redux";
-import { loadNotesActioncreator } from "@/redux/store/features/notesSlice";
-
+import {
+  loadDataActioncreator,
+  addNoteActioncreator,
+  addCategoryActioncreator,
+} from "@/redux/features/categorySlice";
 const TodoList = () => {
   // State
   const titleRef = useRef(null);
@@ -19,16 +21,7 @@ const TodoList = () => {
   const [actualCategory, setActualCategory] = useState("Todas");
   const dispatch = useDispatch();
 
-  const { notes } = useSelector((state) => state.notes);
-
-  console.log(notes);
-
-  const [todoList, setTodoList] = useState([
-    {
-      title: "Todas",
-      content: [],
-    },
-  ]);
+  const todoList = useSelector((state) => state.categories);
 
   const categoriesAbailable = [];
   // add categories to categoriesAbailable
@@ -44,15 +37,12 @@ const TodoList = () => {
   const [hasError, setHasError] = useState(false);
   const [errorCount, setErrorCount] = useState(0);
 
-  // get the todoList from localstorage everytime the web is opened
+  // get the todoList from redux storage everytime the web is opened
   useEffect(() => {
-    const localNotes = getLocalStorage(LOCAL_STORAGE_KEY);
-    // localNotes && setTodoList(localNotes);
-    dispatch(loadNotesActioncreator(localNotes));
-  }, []);
+    dispatch(loadDataActioncreator(localStorage.getItem(LOCAL_STORAGE_KEY)));
+  }, [todoList]);
 
   // Take the focus event on change notes array
-
   const addTodoItem = () => {
     const inputValue = titleRef.current.value;
     const descriptionValue = descriptionRef.current.value;
@@ -73,19 +63,13 @@ const TodoList = () => {
       titleRef.current.value.length
     );
     if (formValidationsPassed) {
-      //if the category is not in the list, add it to the todoList and localstorage
       if (!categoriesAbailable.includes(category)) {
         const newCategory = {
           title: category,
           content: [newTodo],
         };
-        setTodoList([...todoList, newCategory]);
-        localStorage.setItem(
-          LOCAL_STORAGE_KEY,
-          JSON.stringify([...todoList, newCategory])
-        );
+        dispatch(addCategoryActioncreator(newCategory));
       } else {
-        //if the category is in the list, add the note to the category and localstorage
         const newTodoList = todoList.map((category) => {
           if (category.title === newTodo.category) {
             return {
@@ -128,7 +112,7 @@ const TodoList = () => {
 
         <Categories
           todoList={todoList}
-          setTodoList={setTodoList}
+          // setTodoList={setTodoList}
           categoriesAbailable={categoriesAbailable}
           setActualCategory={setActualCategory}
           actualCategory={actualCategory}
@@ -151,7 +135,7 @@ const TodoList = () => {
                   todoList={todoList}
                   actualCategory={actualCategory}
                   setActualCategory={setActualCategory}
-                  setTodoList={setTodoList}
+                  // setTodoList={setTodoList}
                 />
               );
             })
@@ -162,6 +146,7 @@ const TodoList = () => {
                 return category.content.map((todo) => {
                   return (
                     <TodoItem
+                      key={todo.id}
                       id={todo.id}
                       title={todo.title}
                       description={todo.description}
@@ -171,7 +156,7 @@ const TodoList = () => {
                       todoList={todoList}
                       actualCategory={actualCategory}
                       setActualCategory={setActualCategory}
-                      setTodoList={setTodoList}
+                      // setTodoList={setTodoList}
                     />
                   );
                 });
