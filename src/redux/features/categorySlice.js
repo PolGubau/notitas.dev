@@ -6,7 +6,11 @@ const categorySlice = createSlice({
   name: "categories",
   initialState: [],
   reducers: {
-    loadData: (state, action) => action.payload,
+    loadData: (state, action) => {
+      const data = getLocalStorage(LOCAL_STORAGE_KEY);
+      state.content = data;
+    },
+
     addCategory: (state, action) => {
       state.content = [...state.content, action.payload];
       updateLocalStorage(LOCAL_STORAGE_KEY, state.content);
