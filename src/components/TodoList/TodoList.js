@@ -23,24 +23,25 @@ const TodoList = () => {
   const [actualCategory, setActualCategory] = useState("Todas");
   const dispatch = useDispatch();
 
-  // Loading redux State and putting into todoList var
+  // InitialState into todoList var
+  const todoList = useSelector((state) => state.categories);
 
   const allNotes = [];
   const allCategories = [];
 
   useEffect(() => {
-    console.log("Taking data");
-    const data = getLocalStorage(LOCAL_STORAGE_KEY);
-    dispatch(loadDataActioncreator(data));
+    console.log("UseEffect");
+    dispatch(loadDataActioncreator());
+    console.log(todoList);
+
     todoList.map((category) => {
       allCategories.push(category.title);
       category.content.forEach((note) => {
         allNotes.push(note.payload);
       });
     });
-  }, []);
-  const todoList = useSelector((state) => state.categories);
-  console.log(todoList);
+    console.log(allCategories, allNotes);
+  }, [todoList]);
 
   const [hasError, setHasError] = useState(false);
   const [errorCount, setErrorCount] = useState(0);
