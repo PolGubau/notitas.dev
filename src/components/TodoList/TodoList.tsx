@@ -2,18 +2,15 @@ import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import TodoItem from "../TodoItem";
 import { LOCAL_STORAGE_KEY } from "../../utils/constants";
-import { itemVariants } from "./animations";
 import styles from "./TodoList.module.scss";
 import Categories from "./Categories/Categories";
 import { FORM_VALIDATIONS } from "../../utils/formValidation";
 import FormTodo from "../FormTodo/FormTodo";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  loadDataActioncreator,
-  addNoteActioncreator,
-  addCategoryActioncreator,
-} from "@/redux/features/categorySlice";
+import { addCategoryActioncreator } from "@/redux/features/categorySlice";
 import { getLocalStorage } from "@/utils/storage/getLocalStorage";
+import { notesState } from "@/redux/features/notesSlice";
+import React from "react";
 
 const TodoList = () => {
   // State
@@ -24,24 +21,10 @@ const TodoList = () => {
   const dispatch = useDispatch();
 
   // InitialState into todoList var
-  const todoList = useSelector((state) => state.categories);
-
+  const todoList = useSelector(notesState);
+  console.log(todoList);
   const allNotes = [];
   const allCategories = [];
-
-  useEffect(() => {
-    console.log("UseEffect");
-    dispatch(loadDataActioncreator());
-    console.log(todoList);
-
-    todoList.map((category) => {
-      allCategories.push(category.title);
-      category.content.forEach((note) => {
-        allNotes.push(note.payload);
-      });
-    });
-    console.log(allCategories, allNotes);
-  }, [todoList]);
 
   const [hasError, setHasError] = useState(false);
   const [errorCount, setErrorCount] = useState(0);
@@ -122,6 +105,7 @@ const TodoList = () => {
               allCategories={allCategories}
               setActualCategory={setActualCategory}
               actualCategory={actualCategory}
+              setTodoList={undefined}
             />
           ))}
       </div>
@@ -138,11 +122,10 @@ const TodoList = () => {
                   description={todo.description}
                   creationDate={todo.creationDate}
                   isCompleted={todo.isCompleted}
-                  animationVariants={itemVariants}
                   todoList={todoList}
                   actualCategory={actualCategory}
                   setActualCategory={setActualCategory}
-                  // setTodoList={setTodoList}
+                  setTodoList={setTodoList}
                 />
               );
             })

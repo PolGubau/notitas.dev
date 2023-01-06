@@ -5,9 +5,23 @@ import { removeTodoItem } from "../../utils/managingNotes";
 import { updateLocalStorage } from "../../utils/storage/updateLocalStorage";
 import { LOCAL_STORAGE_KEY } from "../../utils/constants";
 import styles from "./TodoItem.module.scss";
+import React from "react";
 import { CgClose } from "react-icons/cg";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteNoteActioncreator } from "@/redux/features/categorySlice";
+
+interface ITodoItem {
+  id: string;
+  title: string;
+  description: string;
+  creationDate: string;
+  isCompleted: boolean;
+  todoList: ITodoItem[];
+  actualCategory: string;
+  setActualCategory: React.Dispatch<React.SetStateAction<string>>;
+  setTodoList: React.Dispatch<React.SetStateAction<ITodoItem[]>>;
+}
+
 const TodoItem = ({
   id,
   title,
@@ -18,7 +32,7 @@ const TodoItem = ({
   actualCategory,
   setActualCategory,
   setTodoList,
-}) => {
+}: ITodoItem) => {
   const dispatch = useDispatch();
 
   const todoRef = useRef(null);
@@ -26,7 +40,7 @@ const TodoItem = ({
   const [open, setOpen] = useState(false);
   const [deletable, setDeletable] = useState(false);
 
-  const deleteById = (idToRemove) => {
+  const deleteById = (idToRemove: string) => {
     dispatch(deleteNoteActioncreator(idToRemove));
   };
 

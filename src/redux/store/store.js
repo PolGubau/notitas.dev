@@ -4,7 +4,6 @@ import notesSlice from "../features/notesSlice";
 const store = configureStore({
   reducer: {
     notes: notesSlice,
-    // categories: categorySlice,
   },
 });
 

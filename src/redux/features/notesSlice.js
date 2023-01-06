@@ -5,16 +5,24 @@ import { updateLocalStorage } from "../../utils/storage/updateLocalStorage";
 
 const notesSlice = createSlice({
   name: "notes",
-  initialState: [],
+  initialState: getLocalStorage(LOCAL_STORAGE_KEY)
+    ? getLocalStorage(LOCAL_STORAGE_KEY)
+    : [],
   reducers: {
-    loadData: (state, action) => {
-      // const data = getLocalStorage(LOCAL_STORAGE_KEY);
-      const data = ["1", "2"];
-      state.content = data;
+    addNoteActioncreator: (state, action) => {
+      state.push(action.payload);
+      updateLocalStorage(LOCAL_STORAGE_KEY, state);
+    },
+    deleteNoteActioncreator: (state, action) => {
+      const newState = state.filter((note) => note.id !== action.payload);
+      updateLocalStorage(LOCAL_STORAGE_KEY, newState);
+      return newState;
     },
   },
 });
 
-export const { loadData: loadDataActioncreator } = notesSlice.actions;
+export const notesState = (state) => state.notes;
+export const { addNoteActioncreator, deleteNoteActioncreator } =
+  notesSlice.actions;
 
 export default notesSlice.reducer;
